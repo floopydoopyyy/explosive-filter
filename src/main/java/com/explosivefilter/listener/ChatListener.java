@@ -47,14 +47,14 @@ public final class ChatListener {
         double y = sender.getY() + 1.0;
         double z = sender.getZ();
 
-        var typeLookup = world.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE);
+        var typeRegistry = world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE);
 
         // Speaker always takes damage directly with the self-explosion source so they get
         // the comical self-death message. The word_explosion_self damage type is in the
         // bypasses_invulnerability tag, so creative players are killed just as reliably.
         if (ExplosiveFilterConfig.isDealDamage() && !sender.isDeadOrDying()) {
             DamageSource selfSource = new DamageSource(
-                    typeLookup.getOrThrow(SELF_EXPLOSION_KEY));
+                    typeRegistry.getHolderOrThrow(SELF_EXPLOSION_KEY));
             float dmg = ExplosiveFilterConfig.isInstakill()
                     ? 10_000f
                     : power * 5f;
@@ -66,7 +66,7 @@ public final class ChatListener {
         // FilterExplosionBehavior always excludes the speaker from blast damage since
         // their death is already handled above.
         DamageSource blamedSource = new DamageSource(
-                typeLookup.getOrThrow(BLAMED_EXPLOSION_KEY),
+                typeRegistry.getHolderOrThrow(BLAMED_EXPLOSION_KEY),
                 sender,
                 sender);
 
