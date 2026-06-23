@@ -3,10 +3,8 @@ package com.explosivefilter;
 import com.explosivefilter.command.FilterCommand;
 import com.explosivefilter.config.ExplosiveFilterConfig;
 import com.explosivefilter.listener.ChatListener;
-import com.explosivefilter.network.FilterPackets;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +19,6 @@ public class Explosivefilter implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		PayloadTypeRegistry.playS2C().register(
-				FilterPackets.ExplodeTriggerPayload.TYPE,
-				FilterPackets.ExplodeTriggerPayload.STREAM_CODEC
-		);
-
 		FilterCommand.register();
 		ChatListener.register();
 

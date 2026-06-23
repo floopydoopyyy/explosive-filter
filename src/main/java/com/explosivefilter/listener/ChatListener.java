@@ -4,6 +4,7 @@ import com.explosivefilter.config.ExplosiveFilterConfig;
 import com.explosivefilter.explosion.FilterExplosionBehavior;
 import com.explosivefilter.network.FilterPackets;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatType;
@@ -90,13 +91,14 @@ public final class ChatListener {
         // Camera-shake packet (on top of vanilla explosion FX already sent by explode()).
         float shakeIntensity = Math.min(1.0f, power / 10f);
         int shakeDuration    = Math.max(10, (int)(power * 3));
-        FilterPackets.ExplodeTriggerPayload fxPayload =
-                new FilterPackets.ExplodeTriggerPayload(x, y, z, power, shakeIntensity, shakeDuration);
 
         for (ServerPlayer nearby : world.players()) {
             if (nearby.distanceToSqr(x, y, z) <= FX_RADIUS * FX_RADIUS
-                    && ServerPlayNetworking.canSend(nearby, FilterPackets.ExplodeTriggerPayload.TYPE)) {
-                ServerPlayNetworking.send(nearby, fxPayload);
+                    && ServerPlayNetworking.canSend(nearby, FilterPackets.EXPLODE_TRIGGER_ID)) {
+                var buf = PacketByteBufs.create();
+                buf.writeDouble(x); buf.writeDouble(y); buf.writeDouble(z);
+                buf.writeFloat(power); buf.writeFloat(shakeIntensity); buf.writeVarInt(shakeDuration);
+                ServerPlayNetworking.send(nearby, FilterPackets.EXPLODE_TRIGGER_ID, buf);
             }
         }
     }
