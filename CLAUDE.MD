@@ -20,7 +20,7 @@ All other versions are backports from it.
 | `main` | 1.21.1 | 21 | Mojang | `fabric-loom` | ✅ Done |
 | `1.20.1` | 1.20.1 | 17+ | Mojang | `fabric-loom` | ✅ Done |
 | `1.19.4` | 1.19.4 | 17+ | Mojang | `fabric-loom` | ✅ Done |
-| `1.19.2` | 1.19.2 | 17+ | Mojang | `fabric-loom` | 🔄 In progress |
+| `1.19.2` | 1.19.2 | 17+ | Mojang | `fabric-loom` | ✅ Done |
 | `1.18.2` | 1.18.2 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `1.16.5` | 1.16.5 | 8+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `26.1` | 26.1 | 25 | Mojang official | `net.fabricmc.fabric-loom` | ⬜ Not started |
@@ -263,7 +263,7 @@ fabric_version=0.76.0+1.19.4
 - [x] Step 7: Fix compiler errors (see notes below)
 - [x] Step 8: Logical verification pass (game runs; creative kill and chat broadcast confirmed)
 - [x] Step 9: Set `mod_version=1.1.0+mc1.19.2`
-- [ ] Step 10: Commit, push, tag `v1.1.0-1.19.2`
+- [x] Step 10: Commit, push, tag `v1.1.0-1.19.2`
 
 **`gradle.properties` values** *(actual working values)*:
 ```properties
