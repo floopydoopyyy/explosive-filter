@@ -42,7 +42,7 @@ public final class ChatListener {
         float power = ExplosiveFilterConfig.getPowerFor(content);
         if (power < 0) return;
 
-        ServerLevel world = sender.serverLevel();
+        ServerLevel world = (ServerLevel) sender.getLevel();
         double x = sender.getX();
         double y = sender.getY() + 1.0;
         double z = sender.getZ();
