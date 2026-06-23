@@ -1,0 +1,28 @@
+{
+  "death.attack.word_explosion_self":          "%1$s said the thing",
+  "death.attack.word_explosion_blamed":        "%1$s was caught in someone else's explosion",
+  "death.attack.word_explosion_blamed.player": "%1$s was too close to %2$s",
+
+  "commands.explosivefilter.add.success":      "Added trigger phrase %s with explosion power %.1f.",
+  "commands.explosivefilter.add.updated":      "Updated trigger phrase %s to explosion power %.1f.",
+  "commands.explosivefilter.remove.success":   "Removed trigger phrase %s.",
+  "commands.explosivefilter.remove.fail":      "Phrase %s is not in the filter list.",
+  "commands.explosivefilter.list.header":      "--- Explosive Filter Phrase List ---",
+  "commands.explosivefilter.list.entry":       "  %s  →  power %.1f",
+  "commands.explosivefilter.list.empty":       "The filter list is currently empty.",
+  "commands.explosivefilter.reload.success":   "Config reloaded. %d phrase(s) loaded.",
+  "commands.explosivefilter.power.set":        "Global default power set to %.1f.",
+  "commands.explosivefilter.worlddamage.on":   "World damage enabled.",
+  "commands.explosivefilter.worlddamage.off":  "World damage disabled. (entities still may be damaged unless that setting is changed)",
+  "commands.explosivefilter.damage.on":        "Entity damage enabled.",
+  "commands.explosivefilter.damage.off":       "Entity damage disabled.",
+  "commands.explosivefilter.instakill.on":     "Instakill enabled, anyone who says the phrase will die.",
+  "commands.explosivefilter.instakill.off":    "Instakill disabled, explosion damage is handled by vanilla scaling.",
+  "commands.explosivefilter.dropitems.on":     "Item drops enabled.",
+  "commands.explosivefilter.dropitems.off":    "Item drops disabled.",
+  "commands.explosivefilter.fire.on":          "Fire enabled.",
+  "commands.explosivefilter.fire.off":         "Fire disabled.",
+  "commands.explosivefilter.damageothers.on":  "Damage others enabled. Explosions will damage all nearby entities.",
+  "commands.explosivefilter.damageothers.off": "Damage others disabled. Only the speaker takes damage.",
+  "commands.explosivefilter.noPermission":     "You do not have permission to use this command."
+}

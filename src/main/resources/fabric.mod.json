@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "explosivefilter",
+	"version": "${version}",
+	"name": "Explosive Filter",
+	"description": "Say a banned word, meet an explosion.",
+	"authors": [
+		"oliverdavies400"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/explosivefilter/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.explosivefilter.Explosivefilter"
+		],
+		"client": [
+			"com.explosivefilter.client.ExplosivefilterClient"
+		]
+	},
+	"mixins": [
+		"explosivefilter.mixins.json",
+		{
+			"config": "explosivefilter.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
