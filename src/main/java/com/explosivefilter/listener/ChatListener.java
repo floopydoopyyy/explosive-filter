@@ -23,11 +23,11 @@ public final class ChatListener {
 
     private static final ResourceKey<DamageType> SELF_EXPLOSION_KEY = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath("explosivefilter", "word_explosion_self"));
+            new ResourceLocation("explosivefilter", "word_explosion_self"));
 
     private static final ResourceKey<DamageType> BLAMED_EXPLOSION_KEY = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath("explosivefilter", "word_explosion_blamed"));
+            new ResourceLocation("explosivefilter", "word_explosion_blamed"));
 
     public static void register() {
         ServerMessageEvents.CHAT_MESSAGE.register(ChatListener::onChatMessage);
