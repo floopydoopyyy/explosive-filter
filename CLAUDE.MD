@@ -21,7 +21,7 @@ All other versions are backports from it.
 | `1.20.1` | 1.20.1 | 17+ | Mojang | `fabric-loom` | ✅ Done |
 | `1.19.4` | 1.19.4 | 17+ | Mojang | `fabric-loom` | ✅ Done |
 | `1.19.2` | 1.19.2 | 17+ | Mojang | `fabric-loom` | ✅ Done |
-| `1.18.2` | 1.18.2 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
+| `1.18.2` | 1.18.2 | 17+ | Mojang | `fabric-loom` | 🔄 In progress |
 | `1.16.5` | 1.16.5 | 8+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `26.1` | 26.1 | 25 | Mojang official | `net.fabricmc.fabric-loom` | ⬜ Not started |
 
@@ -295,29 +295,37 @@ fabric_api_version=0.77.0+1.19.2
 
 ---
 
-### Branch `1.18.2` — Minecraft 1.18.2
+### Branch `1.18.2` — Minecraft 1.18.2 🔄
 
 **Checklist:**
-- [ ] Step 1: `git checkout -b 1.18.2`
-- [ ] Step 2: Update `gradle.properties`
-- [ ] Step 3: Update Gradle wrapper (7.4+)
-- [ ] Step 4: Update Loom plugin version to `0.12-SNAPSHOT`
-- [ ] Step 5: Update `fabric.mod.json`; use `"fabric": "*"` in `depends` (old mod ID)
+- [x] Step 1: `git checkout -b 1.18.2`
+- [x] Step 2: Update `gradle.properties`
+- [x] Step 3: Gradle wrapper unchanged (9.5.1 carries over from 1.19.2, works fine)
+- [x] Step 4: Loom plugin unchanged (`fabric-loom` 1.17-SNAPSHOT)
+- [x] Step 5: Update `fabric.mod.json`; `fabric-api` → `fabric` (old mod ID); MC `~1.18.2`
 - [ ] Step 6: Refresh Gradle + `genSources`
 - [ ] Step 7: Fix compiler errors (see notes below)
 - [ ] Step 8: Logical verification pass
-- [ ] Step 9: Set `mod_version=1.1.0+mc1.18.2`
+- [x] Step 9: Set `mod_version=1.1.0+mc1.18.2`
 - [ ] Step 10: Commit, push, tag `v1.1.0-1.18.2`
 
-**`gradle.properties` values** *(verify at fabricmc.net/develop)*:
+**`gradle.properties` values** *(actual working values)*:
 ```properties
 minecraft_version=1.18.2
-yarn_mappings=1.18.2+build.4
-loader_version=0.14.21
-fabric_version=0.46.4+1.18.2
+loader_version=0.19.3
+loom_version=1.17-SNAPSHOT
+fabric_api_version=0.77.0+1.18.2
 ```
+> Note: `0.46.4+1.18.2` does not exist; earliest is `0.50.0+1.18.2`. Uses Mojang mappings.
 
-**Minimum Gradle:** 7.4 | **Java:** 17 | **Loom:** 0.12-SNAPSHOT
+**Minimum Gradle:** 7.4 | **Java:** 17 | **Loom:** 1.17-SNAPSHOT
+
+**Key differences from 1.19.2 already applied:**
+- `ServerMessageEvents` → `ChatMixin` on `ServerGamePacketListenerImpl.handleChat()`
+- `CommandRegistrationCallback` v2 → v1 (v2 requires 1.19+ `CommandBuildContext`)
+- `sendSystemMessage` → `sendMessage(component, Util.NIL_UUID)`
+- `fabric-api` mod ID → `fabric`
+- Damage type data files removed (data-driven damage types require 1.19.4+)
 
 **Known porting issues:**
 
