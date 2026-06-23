@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,7 +31,7 @@ public final class ChatListener {
         double y = sender.getY() + 1.0;
         double z = sender.getZ();
 
-        Component announcement = Component.translatable("chat.explosivefilter.trigger", sender.getDisplayName());
+        Component announcement = new TranslatableComponent("chat.explosivefilter.trigger", sender.getDisplayName());
         // 1.18.2: sendSystemMessage was added in 1.19; use sendMessage with NIL UUID.
         world.players().forEach(p -> p.sendMessage(announcement, Util.NIL_UUID));
 
@@ -39,20 +40,12 @@ public final class ChatListener {
         DamageSource selfSource   = DamageSource.explosion(sender);
         DamageSource blamedSource = DamageSource.explosion(sender);
 
-        if (ExplosiveFilterConfig.isDealDamage() && !sender.isDeadOrDying()) {
-            boolean wasInvulnerable = sender.getAbilities().invulnerable;
-            sender.getAbilities().invulnerable = false;
-            float dmg = ExplosiveFilterConfig.isInstakill() ? 10_000f : power * 5f;
-            sender.hurt(selfSource, dmg);
-            if (!sender.isDeadOrDying()) {
-                sender.getAbilities().invulnerable = wasInvulnerable;
-            }
-        }
-
         Explosion.BlockInteraction interaction = ExplosiveFilterConfig.isWorldDamage()
                 ? Explosion.BlockInteraction.DESTROY
                 : Explosion.BlockInteraction.NONE;
 
+        // Explosion first so the visual packet reaches the client before the death packet.
+        // In 1.18.2, Netty flushes each send immediately, so ordering matters.
         world.explode(
                 null,
                 blamedSource,
@@ -66,6 +59,16 @@ public final class ChatListener {
                 ExplosiveFilterConfig.isFire(),
                 interaction
         );
+
+        if (ExplosiveFilterConfig.isDealDamage() && !sender.isDeadOrDying()) {
+            boolean wasInvulnerable = sender.getAbilities().invulnerable;
+            sender.getAbilities().invulnerable = false;
+            float dmg = ExplosiveFilterConfig.isInstakill() ? 10_000f : power * 5f;
+            sender.hurt(selfSource, dmg);
+            if (!sender.isDeadOrDying()) {
+                sender.getAbilities().invulnerable = wasInvulnerable;
+            }
+        }
 
         float shakeIntensity = Math.min(1.0f, power / 10f);
         int shakeDuration    = Math.max(10, (int)(power * 3));

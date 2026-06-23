@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -40,7 +40,7 @@ public final class FilterCommand {
                                         ? "commands.explosivefilter.add.success"
                                         : "commands.explosivefilter.add.updated";
                                 ctx.getSource().sendSuccess(
-                                        Component.translatable(key, displayPhrase(phrase), power),
+                                        new TranslatableComponent(key, displayPhrase(phrase), power),
                                         true);
                                 return 1;
                             })))
@@ -52,14 +52,14 @@ public final class FilterCommand {
                                 String phrase = StringArgumentType.getString(ctx, "phrase").strip();
                                 if (ExplosiveFilterConfig.removePhrase(phrase)) {
                                     ctx.getSource().sendSuccess(
-                                            Component.translatable(
+                                            new TranslatableComponent(
                                                     "commands.explosivefilter.remove.success",
                                                     displayPhrase(phrase)),
                                             true);
                                     return 1;
                                 } else {
                                     ctx.getSource().sendFailure(
-                                            Component.translatable(
+                                            new TranslatableComponent(
                                                     "commands.explosivefilter.remove.fail",
                                                     displayPhrase(phrase)));
                                     return 0;
@@ -73,15 +73,15 @@ public final class FilterCommand {
                             List<ExplosiveFilterConfig.PhraseEntry> phrases =
                                     ExplosiveFilterConfig.getPhrases();
                             src.sendSuccess(
-                                    Component.translatable("commands.explosivefilter.list.header"),
+                                    new TranslatableComponent("commands.explosivefilter.list.header"),
                                     false);
                             if (phrases.isEmpty()) {
                                 src.sendSuccess(
-                                        Component.translatable("commands.explosivefilter.list.empty"),
+                                        new TranslatableComponent("commands.explosivefilter.list.empty"),
                                         false);
                             } else {
                                 phrases.forEach(e -> src.sendSuccess(
-                                        Component.translatable(
+                                        new TranslatableComponent(
                                                 "commands.explosivefilter.list.entry",
                                                 displayPhrase(e.phrase()), e.power()),
                                         false));
@@ -95,7 +95,7 @@ public final class FilterCommand {
                             ExplosiveFilterConfig.load();
                             int count = ExplosiveFilterConfig.getPhrases().size();
                             ctx.getSource().sendSuccess(
-                                    Component.translatable(
+                                    new TranslatableComponent(
                                             "commands.explosivefilter.reload.success", count),
                                     true);
                             return count;
@@ -108,7 +108,7 @@ public final class FilterCommand {
                                 float power = FloatArgumentType.getFloat(ctx, "power");
                                 ExplosiveFilterConfig.setDefaultPower(power);
                                 ctx.getSource().sendSuccess(
-                                        Component.translatable(
+                                        new TranslatableComponent(
                                                 "commands.explosivefilter.power.set", power),
                                         true);
                                 return 1;
@@ -205,7 +205,7 @@ public final class FilterCommand {
     private static int setBool(CommandSourceStack src, Consumer<Boolean> setter,
                                 boolean value, String langKey) {
         setter.accept(value);
-        src.sendSuccess(Component.translatable(langKey), true);
+        src.sendSuccess(new TranslatableComponent(langKey), true);
         return 1;
     }
 }
