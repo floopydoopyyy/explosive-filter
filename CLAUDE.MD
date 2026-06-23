@@ -17,10 +17,10 @@ All other versions are backports from it.
 
 | Branch | Minecraft | Java | Mappings | Loom plugin ID | Status |
 |---|---|---|---|---|---|
-| `main` | 1.21.1 | 21 | Yarn | `fabric-loom` | ⬜ Not started |
-| `1.20.1` | 1.20.1 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
-| `1.19.4` | 1.19.4 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
-| `1.19.2` | 1.19.2 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
+| `main` | 1.21.1 | 21 | Mojang | `fabric-loom` | ✅ Done |
+| `1.20.1` | 1.20.1 | 17+ | Mojang | `fabric-loom` | ✅ Done |
+| `1.19.4` | 1.19.4 | 17+ | Mojang | `fabric-loom` | ✅ Done |
+| `1.19.2` | 1.19.2 | 17+ | Mojang | `fabric-loom` | 🔄 In progress |
 | `1.18.2` | 1.18.2 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `1.16.5` | 1.16.5 | 8+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `26.1` | 26.1 | 25 | Mojang official | `net.fabricmc.fabric-loom` | ⬜ Not started |
@@ -251,27 +251,29 @@ fabric_version=0.76.0+1.19.4
 
 ---
 
-### Branch `1.19.2` — Minecraft 1.19.2
+### Branch `1.19.2` — Minecraft 1.19.2 🔄
 
 **Checklist:**
-- [ ] Step 1: `git checkout -b 1.19.2`
-- [ ] Step 2: Update `gradle.properties`
-- [ ] Step 3: Update Gradle wrapper
-- [ ] Step 4: Update Loom plugin version to `0.12-SNAPSHOT`
-- [ ] Step 5: Update `fabric.mod.json` minecraft constraint to `~1.19.2`; **change `"fabric-api"` to `"fabric"`** in `depends` — the mod ID changed to `fabric-api` *starting* in 1.19.2, but double-check which sub-patch your Fabric API version targets.
-- [ ] Step 6: Refresh Gradle + `genSources`
-- [ ] Step 7: Fix compiler errors (see notes below)
-- [ ] Step 8: Logical verification pass
-- [ ] Step 9: Set `mod_version=1.1.0+mc1.19.2`
+- [x] Step 1: `git checkout -b 1.19.2`
+- [x] Step 2: Update `gradle.properties`
+- [x] Step 3: Update Gradle wrapper
+- [x] Step 4: Update Loom plugin version (`fabric-loom` at `1.17-SNAPSHOT`; `0.12-SNAPSHOT` also works)
+- [x] Step 5: Update `fabric.mod.json` minecraft constraint to `~1.19.2`
+- [x] Step 6: Refresh Gradle + `genSources`
+- [x] Step 7: Fix compiler errors (see notes below)
+- [x] Step 8: Logical verification pass (game runs; creative kill and chat broadcast confirmed)
+- [x] Step 9: Set `mod_version=1.1.0+mc1.19.2`
 - [ ] Step 10: Commit, push, tag `v1.1.0-1.19.2`
 
-**`gradle.properties` values** *(verify at fabricmc.net/develop)*:
+**`gradle.properties` values** *(actual working values)*:
 ```properties
 minecraft_version=1.19.2
-yarn_mappings=1.19.2+build.28
-loader_version=0.14.21
-fabric_version=0.58.0+1.19.2
+loader_version=0.19.3
+loom_version=1.17-SNAPSHOT
+fabric_api_version=0.77.0+1.19.2
 ```
+> Note: uses Mojang official mappings (`loom.officialMojangMappings()`), not Yarn.
+> `0.58.0+1.19.2` does not exist on the Fabric maven; earliest available is `0.59.0+1.19.2`.
 
 **Minimum Gradle:** 7.4 | **Java:** 17 | **Loom:** 0.12-SNAPSHOT
 
