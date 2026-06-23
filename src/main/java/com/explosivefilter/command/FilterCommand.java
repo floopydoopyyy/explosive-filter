@@ -3,7 +3,7 @@ package com.explosivefilter.command;
 import com.explosivefilter.config.ExplosiveFilterConfig;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
@@ -18,7 +18,7 @@ public final class FilterCommand {
     private static final int REQUIRED_PERMISSION = 2;
 
     public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registries, environment) ->
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->
             dispatcher.register(
                 literal("explosivefilter")
                     .requires(src -> src.hasPermission(REQUIRED_PERMISSION))
