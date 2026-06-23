@@ -4,14 +4,14 @@ import com.explosivefilter.config.ExplosiveFilterConfig;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.TranslatableText;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
 
 public final class FilterCommand {
 
@@ -21,11 +21,9 @@ public final class FilterCommand {
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->
             dispatcher.register(
                 literal("explosivefilter")
-                    .requires(src -> src.hasPermission(REQUIRED_PERMISSION))
+                    .requires(src -> src.hasPermissionLevel(REQUIRED_PERMISSION))
 
                     // ── add <phrase> [power] ─────────────────────────────────────────
-                    // greedyString captures everything after the token, including spaces.
-                    // Trailing float is parsed as optional power; rest is the phrase.
                     .then(literal("add")
                         .then(argument("phrase", StringArgumentType.greedyString())
                             .executes(ctx -> {
@@ -39,8 +37,8 @@ public final class FilterCommand {
                                 String key = isNew
                                         ? "commands.explosivefilter.add.success"
                                         : "commands.explosivefilter.add.updated";
-                                ctx.getSource().sendSuccess(
-                                        new TranslatableComponent(key, displayPhrase(phrase), power),
+                                ctx.getSource().sendFeedback(
+                                        new TranslatableText(key, displayPhrase(phrase), power),
                                         true);
                                 return 1;
                             })))
@@ -49,17 +47,17 @@ public final class FilterCommand {
                     .then(literal("remove")
                         .then(argument("phrase", StringArgumentType.greedyString())
                             .executes(ctx -> {
-                                String phrase = StringArgumentType.getString(ctx, "phrase").strip();
+                                String phrase = StringArgumentType.getString(ctx, "phrase").trim();
                                 if (ExplosiveFilterConfig.removePhrase(phrase)) {
-                                    ctx.getSource().sendSuccess(
-                                            new TranslatableComponent(
+                                    ctx.getSource().sendFeedback(
+                                            new TranslatableText(
                                                     "commands.explosivefilter.remove.success",
                                                     displayPhrase(phrase)),
                                             true);
                                     return 1;
                                 } else {
-                                    ctx.getSource().sendFailure(
-                                            new TranslatableComponent(
+                                    ctx.getSource().sendError(
+                                            new TranslatableText(
                                                     "commands.explosivefilter.remove.fail",
                                                     displayPhrase(phrase)));
                                     return 0;
@@ -69,19 +67,19 @@ public final class FilterCommand {
                     // ── list ─────────────────────────────────────────────────────────
                     .then(literal("list")
                         .executes(ctx -> {
-                            CommandSourceStack src = ctx.getSource();
+                            ServerCommandSource src = ctx.getSource();
                             List<ExplosiveFilterConfig.PhraseEntry> phrases =
                                     ExplosiveFilterConfig.getPhrases();
-                            src.sendSuccess(
-                                    new TranslatableComponent("commands.explosivefilter.list.header"),
+                            src.sendFeedback(
+                                    new TranslatableText("commands.explosivefilter.list.header"),
                                     false);
                             if (phrases.isEmpty()) {
-                                src.sendSuccess(
-                                        new TranslatableComponent("commands.explosivefilter.list.empty"),
+                                src.sendFeedback(
+                                        new TranslatableText("commands.explosivefilter.list.empty"),
                                         false);
                             } else {
-                                phrases.forEach(e -> src.sendSuccess(
-                                        new TranslatableComponent(
+                                phrases.forEach(e -> src.sendFeedback(
+                                        new TranslatableText(
                                                 "commands.explosivefilter.list.entry",
                                                 displayPhrase(e.phrase()), e.power()),
                                         false));
@@ -94,8 +92,8 @@ public final class FilterCommand {
                         .executes(ctx -> {
                             ExplosiveFilterConfig.load();
                             int count = ExplosiveFilterConfig.getPhrases().size();
-                            ctx.getSource().sendSuccess(
-                                    new TranslatableComponent(
+                            ctx.getSource().sendFeedback(
+                                    new TranslatableText(
                                             "commands.explosivefilter.reload.success", count),
                                     true);
                             return count;
@@ -107,8 +105,8 @@ public final class FilterCommand {
                             .executes(ctx -> {
                                 float power = FloatArgumentType.getFloat(ctx, "power");
                                 ExplosiveFilterConfig.setDefaultPower(power);
-                                ctx.getSource().sendSuccess(
-                                        new TranslatableComponent(
+                                ctx.getSource().sendFeedback(
+                                        new TranslatableText(
                                                 "commands.explosivefilter.power.set", power),
                                         true);
                                 return 1;
@@ -172,40 +170,30 @@ public final class FilterCommand {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    /** Wraps multi-word phrases in quotes for display; single words are shown bare. */
     private static String displayPhrase(String phrase) {
         return phrase.contains(" ") ? "\"" + phrase + "\"" : phrase;
     }
 
-    /**
-     * Parses a greedy string that may end with an optional float power value.
-     *
-     * "boom 5.0"              → ["boom",             "5.0"]
-     * "never gonna give 7.0"  → ["never gonna give", "7.0"]
-     * "creeper"               → ["creeper",           null ]
-     *
-     * Surrounding quotes are stripped first (Brigadier greedyString may leave them).
-     */
     private static String[] splitPhraseAndPower(String raw) {
-        raw = raw.strip();
+        raw = raw.trim();
         if (raw.startsWith("\"") && raw.endsWith("\"") && raw.length() > 1) {
-            return new String[]{ raw.substring(1, raw.length() - 1).strip(), null };
+            return new String[]{ raw.substring(1, raw.length() - 1).trim(), null };
         }
         int lastSpace = raw.lastIndexOf(' ');
         if (lastSpace >= 0) {
             String lastToken = raw.substring(lastSpace + 1);
             try {
                 Float.parseFloat(lastToken);
-                return new String[]{ raw.substring(0, lastSpace).strip(), lastToken };
+                return new String[]{ raw.substring(0, lastSpace).trim(), lastToken };
             } catch (NumberFormatException ignored) {}
         }
         return new String[]{ raw, null };
     }
 
-    private static int setBool(CommandSourceStack src, Consumer<Boolean> setter,
+    private static int setBool(ServerCommandSource src, Consumer<Boolean> setter,
                                 boolean value, String langKey) {
         setter.accept(value);
-        src.sendSuccess(new TranslatableComponent(langKey), true);
+        src.sendFeedback(new TranslatableText(langKey), true);
         return 1;
     }
 }

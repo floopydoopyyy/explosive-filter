@@ -2,8 +2,11 @@ package com.explosivefilter.client;
 
 import com.explosivefilter.network.FilterPackets;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.Environment;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
+@Environment(EnvType.CLIENT)
 public class ExplosivefilterClient implements ClientModInitializer {
 
 	@Override

@@ -1,31 +1,27 @@
 package com.explosivefilter.explosion;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ExplosionDamageCalculator;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
+import net.minecraft.block.BlockState;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.explosion.ExplosionBehavior;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class FilterExplosionBehavior extends ExplosionDamageCalculator {
+public class FilterExplosionBehavior extends ExplosionBehavior {
 
     private final boolean dropItems;
-    // dealDamage / damageOthers / speakerUuid are unused in 1.20.1:
-    // shouldDamageEntity() was added in 1.21 and does not exist here.
-    // The speaker is still excluded via the direct hurt() call in ChatListener.
 
     public FilterExplosionBehavior(boolean dropItems, boolean dealDamage, boolean damageOthers, UUID speakerUuid) {
         this.dropItems = dropItems;
     }
 
-    // Returning Optional.empty() tells the explosion to skip this block entirely —
-    // equivalent of shouldBlockExplode() returning false in 1.21.
+    // Returning Optional.empty() skips this block in the explosion ray calculation.
     @Override
-    public Optional<Float> getBlockExplosionResistance(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid) {
+    public Optional<Float> getBlastResistance(Explosion explosion, BlockView world, BlockPos pos, BlockState blockState, FluidState fluidState) {
         if (!dropItems) return Optional.empty();
-        return super.getBlockExplosionResistance(explosion, reader, pos, state, fluid);
+        return super.getBlastResistance(explosion, world, pos, blockState, fluidState);
     }
 }

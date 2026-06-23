@@ -22,7 +22,13 @@ public final class ExplosiveFilterConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    public record PhraseEntry(String phrase, float power) {}
+    public static final class PhraseEntry {
+        private final String phrase;
+        private final float power;
+        public PhraseEntry(String phrase, float power) { this.phrase = phrase; this.power = power; }
+        public String phrase() { return phrase; }
+        public float power()   { return power;  }
+    }
 
     private static final List<PhraseEntry> PHRASES = new ArrayList<>();
     private static float defaultPower = 4.0f;
@@ -61,7 +67,7 @@ public final class ExplosiveFilterConfig {
 
     /** Adds or updates a phrase. Returns true if it was a new entry. */
     public static boolean addPhrase(String phrase, float power) {
-        String key = phrase.strip().toLowerCase();
+        String key = phrase.trim().toLowerCase();
         if (key.isEmpty()) return false;
         for (int i = 0; i < PHRASES.size(); i++) {
             if (PHRASES.get(i).phrase().equals(key)) {
@@ -77,7 +83,7 @@ public final class ExplosiveFilterConfig {
 
     /** Removes a phrase. Returns true if it existed. */
     public static boolean removePhrase(String phrase) {
-        String key = phrase.strip().toLowerCase();
+        String key = phrase.trim().toLowerCase();
         boolean removed = PHRASES.removeIf(e -> e.phrase().equals(key));
         if (removed) save();
         return removed;
@@ -146,7 +152,7 @@ public final class ExplosiveFilterConfig {
             if (root.has("phrases")) {
                 for (JsonElement el : root.getAsJsonArray("phrases")) {
                     JsonObject obj = el.getAsJsonObject();
-                    String phrase = obj.get("phrase").getAsString().strip().toLowerCase();
+                    String phrase = obj.get("phrase").getAsString().trim().toLowerCase();
                     float  power  = obj.get("power").getAsFloat();
                     PHRASES.add(new PhraseEntry(phrase, power));
                 }
