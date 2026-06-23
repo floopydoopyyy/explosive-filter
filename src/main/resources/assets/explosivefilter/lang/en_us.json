@@ -1,4 +1,6 @@
 {
+  "chat.explosivefilter.trigger":               "%1$s said the thing",
+
   "death.attack.word_explosion_self":          "%1$s said the thing",
   "death.attack.word_explosion_blamed":        "%1$s was caught in someone else's explosion",
   "death.attack.word_explosion_blamed.player": "%1$s was too close to %2$s",
