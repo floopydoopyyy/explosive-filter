@@ -6,28 +6,16 @@ import com.explosivefilter.network.FilterPackets;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.PlayerChatMessage;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Explosion;
 
 public final class ChatListener {
 
     private static final double FX_RADIUS = 64.0;
-
-    private static final ResourceKey<DamageType> SELF_EXPLOSION_KEY = ResourceKey.create(
-            Registries.DAMAGE_TYPE,
-            new ResourceLocation("explosivefilter", "word_explosion_self"));
-
-    private static final ResourceKey<DamageType> BLAMED_EXPLOSION_KEY = ResourceKey.create(
-            Registries.DAMAGE_TYPE,
-            new ResourceLocation("explosivefilter", "word_explosion_blamed"));
 
     public static void register() {
         ServerMessageEvents.CHAT_MESSAGE.register(ChatListener::onChatMessage);
@@ -47,36 +35,26 @@ public final class ChatListener {
         double y = sender.getY() + 1.0;
         double z = sender.getZ();
 
-        var typeRegistry = world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE);
+        // 1.19.2 has no data-driven damage types; use the static explosion factory.
+        // Instakill will not affect creative players on this version (no
+        // bypasses_invulnerability damage type tag support).
+        DamageSource blastSource = DamageSource.explosion(sender);
 
-        // Speaker always takes damage directly with the self-explosion source so they get
-        // the comical self-death message. The word_explosion_self damage type is in the
-        // bypasses_invulnerability tag, so creative players are killed just as reliably.
         if (ExplosiveFilterConfig.isDealDamage() && !sender.isDeadOrDying()) {
-            DamageSource selfSource = new DamageSource(
-                    typeRegistry.getHolderOrThrow(SELF_EXPLOSION_KEY));
             float dmg = ExplosiveFilterConfig.isInstakill()
                     ? 10_000f
                     : power * 5f;
-            sender.hurt(selfSource, dmg);
+            sender.hurt(blastSource, dmg);
         }
 
-        // Blamed source carries the sender as the causing entity so that nearby players
-        // who die see "%1$s was caught in %2$s's blast" with correct attribution.
-        // FilterExplosionBehavior always excludes the speaker from blast damage since
-        // their death is already handled above.
-        DamageSource blamedSource = new DamageSource(
-                typeRegistry.getHolderOrThrow(BLAMED_EXPLOSION_KEY),
-                sender,
-                sender);
-
-        Level.ExplosionInteraction interaction = ExplosiveFilterConfig.isWorldDamage()
-                ? Level.ExplosionInteraction.TNT
-                : Level.ExplosionInteraction.NONE;
+        // Level.ExplosionInteraction does not exist in 1.19.2; use Explosion.BlockInteraction.
+        Explosion.BlockInteraction interaction = ExplosiveFilterConfig.isWorldDamage()
+                ? Explosion.BlockInteraction.DESTROY
+                : Explosion.BlockInteraction.NONE;
 
         world.explode(
                 null,
-                blamedSource,
+                blastSource,
                 new FilterExplosionBehavior(
                         ExplosiveFilterConfig.isDropItems(),
                         ExplosiveFilterConfig.isDealDamage(),
@@ -88,7 +66,7 @@ public final class ChatListener {
                 interaction
         );
 
-        // Camera-shake packet (on top of vanilla explosion FX already sent by explode()).
+        // Camera-shake packet.
         float shakeIntensity = Math.min(1.0f, power / 10f);
         int shakeDuration    = Math.max(10, (int)(power * 3));
 
