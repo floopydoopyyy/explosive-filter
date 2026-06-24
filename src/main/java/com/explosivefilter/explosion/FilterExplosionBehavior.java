@@ -1,16 +1,16 @@
 package com.explosivefilter.explosion;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.explosion.Explosion;
-import net.minecraft.world.explosion.ExplosionBehavior;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public class FilterExplosionBehavior extends ExplosionBehavior {
+public class FilterExplosionBehavior extends ExplosionDamageCalculator {
 
     private final boolean dropItems;
 
@@ -18,10 +18,9 @@ public class FilterExplosionBehavior extends ExplosionBehavior {
         this.dropItems = dropItems;
     }
 
-    // Returning Optional.empty() skips this block in the explosion ray calculation.
     @Override
-    public Optional<Float> getBlastResistance(Explosion explosion, BlockView world, BlockPos pos, BlockState blockState, FluidState fluidState) {
+    public Optional<Float> getBlockExplosionResistance(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, FluidState fluid) {
         if (!dropItems) return Optional.empty();
-        return super.getBlastResistance(explosion, world, pos, blockState, fluidState);
+        return super.getBlockExplosionResistance(explosion, reader, pos, state, fluid);
     }
 }
