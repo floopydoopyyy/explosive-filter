@@ -8,8 +8,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.PlayerChatMessage;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,11 +22,11 @@ public final class ChatListener {
 
     private static final ResourceKey<DamageType> SELF_EXPLOSION_KEY = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath("explosivefilter", "word_explosion_self"));
+            Identifier.fromNamespaceAndPath("explosivefilter", "word_explosion_self"));
 
     private static final ResourceKey<DamageType> BLAMED_EXPLOSION_KEY = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath("explosivefilter", "word_explosion_blamed"));
+            Identifier.fromNamespaceAndPath("explosivefilter", "word_explosion_blamed"));
 
     public static void register() {
         ServerMessageEvents.CHAT_MESSAGE.register(ChatListener::onChatMessage);
@@ -41,7 +41,8 @@ public final class ChatListener {
         float power = ExplosiveFilterConfig.getPowerFor(content);
         if (power < 0) return;
 
-        ServerLevel world = sender.serverLevel();
+        // 26.1: serverLevel() removed; level() still exists on Entity, returns Level.
+        ServerLevel world = (ServerLevel) sender.level();
         double x = sender.getX();
         double y = sender.getY() + 1.0;
         double z = sender.getZ();
@@ -57,7 +58,8 @@ public final class ChatListener {
             float dmg = ExplosiveFilterConfig.isInstakill()
                     ? 10_000f
                     : power * 5f;
-            sender.hurt(selfSource, dmg);
+            // 26.1: hurt(DamageSource, float) → hurtServer(ServerLevel, DamageSource, float).
+            sender.hurtServer(world, selfSource, dmg);
         }
 
         // Blamed source carries the sender as the causing entity so that nearby players

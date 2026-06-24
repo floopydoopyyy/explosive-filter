@@ -7,7 +7,7 @@ import com.explosivefilter.network.FilterPackets;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,13 +15,15 @@ public class Explosivefilter implements ModInitializer {
 	public static final String MOD_ID = "explosivefilter";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	public static ResourceLocation id(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	// 26.1: ResourceLocation renamed to Identifier in net.minecraft.resources.
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	@Override
 	public void onInitialize() {
-		PayloadTypeRegistry.playS2C().register(
+		// 26.1: PayloadTypeRegistry.playS2C() renamed to clientboundPlay().
+		PayloadTypeRegistry.clientboundPlay().register(
 				FilterPackets.ExplodeTriggerPayload.TYPE,
 				FilterPackets.ExplodeTriggerPayload.STREAM_CODEC
 		);

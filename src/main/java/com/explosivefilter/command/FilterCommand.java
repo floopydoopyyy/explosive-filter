@@ -4,6 +4,7 @@ import com.explosivefilter.config.ExplosiveFilterConfig;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.commands.Commands;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 
@@ -15,13 +16,12 @@ import static net.minecraft.commands.Commands.literal;
 
 public final class FilterCommand {
 
-    private static final int REQUIRED_PERMISSION = 2;
-
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registries, environment) ->
             dispatcher.register(
                 literal("explosivefilter")
-                    .requires(src -> src.hasPermission(REQUIRED_PERMISSION))
+                    // 26.1: hasPermission(int) removed; LEVEL_GAMEMASTERS == op level 2.
+                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 
                     // ── add <phrase> [power] ─────────────────────────────────────────
                     // greedyString captures everything after the token, including spaces.
