@@ -21,8 +21,8 @@ All other versions are backports from it.
 | `1.20.1` | 1.20.1 | 17+ | Mojang | `fabric-loom` | ✅ Done |
 | `1.19.4` | 1.19.4 | 17+ | Mojang | `fabric-loom` | ✅ Done |
 | `1.19.2` | 1.19.2 | 17+ | Mojang | `fabric-loom` | ✅ Done |
-| `1.18.2` | 1.18.2 | 17+ | Mojang | `fabric-loom` | 🔄 In progress |
-| `1.16.5` | 1.16.5 | 8+ | Yarn | `fabric-loom` | ⬜ Not started |
+| `1.18.2` | 1.18.2 | 17+ | Mojang | `fabric-loom` | ✅ Done |
+| `1.16.5` | 1.16.5 | 8+ | Mojang | `fabric-loom` | ✅ Done |
 | `26.1` | 26.1 | 25 | Mojang official | `net.fabricmc.fabric-loom` | ⬜ Not started |
 
 > Update the **Status** column as you work. Replace ⬜ with 🔄 (in progress) or ✅ (done).
@@ -351,17 +351,17 @@ fabric_api_version=0.77.0+1.18.2
 ### Branch `1.16.5` — Minecraft 1.16.5
 
 **Checklist:**
-- [ ] Step 1: `git checkout -b 1.16.5`
-- [ ] Step 2: Update `gradle.properties`
-- [ ] Step 3: Update Gradle wrapper (7.4+)
-- [ ] Step 4: Update Loom plugin version to `0.9-SNAPSHOT`
-- [ ] Step 5: Update `build.gradle` Java compatibility to `JavaVersion.VERSION_1_8`
-- [ ] Step 6: Update `fabric.mod.json`; use `"fabric": "*"` in `depends`
-- [ ] Step 7: Refresh Gradle + `genSources`
-- [ ] Step 8: Fix compiler errors (see notes below)
-- [ ] Step 9: Logical verification pass
-- [ ] Step 10: Set `mod_version=1.1.0+mc1.16.5`
-- [ ] Step 11: Commit, push, tag `v1.1.0-1.16.5`
+- [x] Step 1: `git checkout -b 1.16.5`
+- [x] Step 2: Update `gradle.properties`
+- [x] Step 3: Update Gradle wrapper (7.4+)
+- [x] Step 4: Update Loom plugin version (1.17-SNAPSHOT + Mojang mappings, same as 1.18.2)
+- [x] Step 5: Update `build.gradle` Java compatibility to `JavaVersion.VERSION_1_8`
+- [x] Step 6: Update `fabric.mod.json`; use `"fabric": "*"` in `depends`
+- [x] Step 7: Refresh Gradle + `genSources`
+- [x] Step 8: Fix compiler errors (see notes below)
+- [x] Step 9: Logical verification pass
+- [x] Step 10: Set `mod_version=1.1.0+mc1.16.5`
+- [x] Step 11: Commit, push, tag `v1.1.0-1.16.5`
 
 **`gradle.properties` values** *(verify at fabricmc.net/develop)*:
 ```properties
