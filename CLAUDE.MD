@@ -23,7 +23,7 @@ All other versions are backports from it.
 | `1.19.2` | 1.19.2 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `1.18.2` | 1.18.2 | 17+ | Yarn | `fabric-loom` | ⬜ Not started |
 | `1.16.5` | 1.16.5 | 8+ | Yarn | `fabric-loom` | ⬜ Not started |
-| `26.1` | 26.1 | 25 | Mojang official | `net.fabricmc.fabric-loom` | 🔄 In progress |
+| `26.1` | 26.1 | 25 | Mojang official | `net.fabricmc.fabric-loom` | ✅ Done |
 
 > Update the **Status** column as you work. Replace ⬜ with 🔄 (in progress) or ✅ (done).
 
